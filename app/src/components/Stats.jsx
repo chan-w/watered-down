@@ -30,9 +30,9 @@ class Stats extends Component {
 
   async componentDidMount() {
     const userData = await getData(`https://watered-down.zeet.app/api/user/${this.props.userId}`);
-    const gallons = userData.reduce((sum, rec) => sum + rec.gallons, 0);
+    const gallons = userData.reduce((sum, rec) => Number.parseInt(sum, 10) + Number.parseInt(rec.gallons, 10), 0);
     const appliances = userData.reduce((apps, rec) => apps.includes(rec['application_id']) ? apps : apps.concat([rec['application_id']]), []);
-    const galPerApp = appliances.map((app) => userData.reduce((tot, rec) => rec['application_id']==app ? tot+rec['gallons'] : tot, 0));
+    const galPerApp = appliances.map((app) => userData.reduce((tot, rec) => rec['application_id']==app ? parseInt(tot, 10)+parseInt(rec['gallons'], 10) : tot, 0));
     this.setState({
       gallons: gallons,
       appliances: appliances,
@@ -45,10 +45,12 @@ class Stats extends Component {
       if (this.state.isLoading) {
         return <Spinner/>;
       }
+        let width = 200;
+        let height = 300;
         return ( 
           <div>
             {[...Array(this.state.gallons),].map((e,i) =>{ 
-              return <Image src= {gallon} fluid width = "200" height ="300"/>})}
+              return <Image src= {gallon} fluid width = {width} height ={height}/>})}
 
             <div style ={title}> Total Water Usage is {this.state.gallons} Gallons </div>
             <h5> Select option below to view water usage for specific appliance: </h5>
@@ -65,7 +67,7 @@ class Stats extends Component {
                     <Accordion.Collapse eventKey={val}>
                         <Card.Body>
                             {[...Array(this.state.galPerApp[idx]),].map((e, i) =>{ 
-                                return <Image src= {gallon} fluid width = "200" height ="300"/>})}
+                                return <Image src={gallon} fluid width={width} height={height} /> } )}
                         </Card.Body>
                     </Accordion.Collapse>
                     </Card>
